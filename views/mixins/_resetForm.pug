@@ -1,0 +1,7 @@
+mixin resetForm()
+  form.form(method="POST")
+    label(for="password") New Password
+    input(type="password" name="password")
+    label(for="password-confirm") Confirm New Password
+    input(type="password" name="password-confirm")
+    input.button(type="submit" value="Reset Password →")
