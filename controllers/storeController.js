@@ -7,27 +7,27 @@ const uuid = require('uuid');
 
 const multerOptions = {
   storage: multer.memoryStorage(), // save original file to memory for resizing
-  fileFilter(req, file, next) { // ES6 syntax
+  fileFilter(req, file, next) {
     const isPhoto = file.mimetype.startsWith('image/');
     if (isPhoto) {
       next(null, true);
     } else {
       next({ message: `${file.mimetype} is not an allowed filetype!` }, false);
     }
-  }
+  },
 };
 
 // Display the home page of the site
 exports.homePage = (req, res) => {
   res.render('index', {
-    title: 'Hiya!'
+    title: 'Hiya!',
   });
 };
 
 // Display the Add Store page
 exports.addStore = (req, res) => {
   res.render('editStore', {
-    title: 'Add Store'
+    title: 'Add Store',
   });
 };
 
@@ -58,7 +58,7 @@ exports.resize = async (req, res, next) => {
 exports.createStore = async (req, res) => {
   req.body.author = req.user._id;
   // response from await (on the save() promise) will be stored in the store variable, giving us immediate access to the slug property.
-  const store = await (new Store(req.body)).save();
+  const store = await new Store(req.body).save();
   req.flash('success', `Successfully created ${store.name}. Care to leave a review?`);
   res.redirect(`/store/${store.slug}`);
 };
@@ -67,9 +67,8 @@ exports.createStore = async (req, res) => {
 exports.getStores = async (req, res) => {
   const page = req.params.page || 1;
   const limit = 4;
-  const skip = (page * limit) - limit;
-  const storesPromise = Store
-    .find()
+  const skip = page * limit - limit;
+  const storesPromise = Store.find()
     .skip(skip)
     .limit(limit)
     .sort({ created: 'desc' });
@@ -87,7 +86,7 @@ exports.getStores = async (req, res) => {
     count,
     page,
     pages,
-    stores
+    stores,
   });
 };
 
@@ -110,7 +109,7 @@ exports.editStore = async (req, res) => {
   // 3. Render the edit form so the user can update their info
   res.render('editStore', {
     title: `Edit ${store.name}`,
-    store
+    store,
   });
 };
 
@@ -120,7 +119,7 @@ exports.updateStore = async (req, res) => {
   // findOneAndUpdate(query, data, options)
   const store = await Store.findOneAndUpdate({ _id: req.params.id }, req.body, {
     new: true, // return the new store info instead of the old
-    runValidators: true // check data against the schema to make sure things are kosher
+    runValidators: true, // check data against the schema to make sure things are kosher
   }).exec(); // exec() to run the mongo query
   req.flash('success', `Successfully updated ${store.name}. <a href="/store/${store.slug}">View Store →</a>`);
   // 2. Redirect the user to the store page and tell them all is well
@@ -136,12 +135,12 @@ exports.getStoreBySlug = async (req, res, next) => {
   }
   res.render('store', {
     title: store.name,
-    store
+    store,
   });
 };
 
 exports.getStoresByTag = async (req, res) => {
-  const tag = req.params.tag;
+  const { tag } = req.params;
   const tagQuery = tag || { $exists: true };
   const tagsPromise = Store.getTagsList();
   const storesPromise = Store.find({ tags: tagQuery });
@@ -152,23 +151,23 @@ exports.getStoresByTag = async (req, res) => {
     title: 'Tags',
     tag,
     tags,
-    stores
+    stores,
   });
 };
 
 exports.mapPage = (req, res) => {
   res.render('map', {
-    title: 'Map'
+    title: 'Map',
   });
 };
 
 exports.getStoresByHeart = async (req, res) => {
   const stores = await Store.find({
-    _id: { $in: req.user.hearts }
+    _id: { $in: req.user.hearts },
   });
   res.render('stores', {
     title: 'Hearted Stores',
-    stores
+    stores,
   });
 };
 
@@ -176,7 +175,7 @@ exports.getTopStores = async (req, res) => {
   const stores = await Store.getTopStores();
   res.render('topStores', {
     title: `Top ${stores.length} Stores`,
-    stores
+    stores,
   });
 };
 
@@ -187,35 +186,37 @@ exports.searchStores = async (req, res) => {
   if (!req.params.query) {
     res.json({
       status: 400,
-      message: 'Empty search query returns empty results.'
+      message: 'Empty search query returns empty results.',
     });
     return;
   }
   const stores = await Store
-  // first find stores that nmatch...
-    .find({
-      $text: {
-        $search: req.params.query || ''
+    // first find stores that nmatch...
+    .find(
+      {
+        $text: {
+          $search: req.params.query || '',
+        },
+      },
+      {
+        score: {
+          $meta: 'textScore',
+        },
       }
-    }, {
-      score: {
-        $meta: 'textScore'
-      }
-    })
+    )
     // then sort the results
     .sort({
-      score: { $meta: 'textScore' }
+      score: { $meta: 'textScore' },
     });
   if (!stores.length) {
     res.json({
       status: 400,
       message: 'Got your query. Found no matches.',
-      query: `${req.params.query}`
+      query: `${req.params.query}`,
     });
     return;
-  } else {
-    res.json(stores);
   }
+  res.json(stores);
 };
 
 exports.mapStores = async (req, res) => {
@@ -225,14 +226,16 @@ exports.mapStores = async (req, res) => {
       $near: {
         $geometry: {
           type: 'Point',
-          coordinates
+          coordinates,
         },
-        $maxDistance: 10000 // 10km
-      }
-    }
+        $maxDistance: 10000, // 10km
+      },
+    },
   };
 
-  const stores = await Store.find(query).select('slug name description photo location').limit(10);
+  const stores = await Store.find(query)
+    .select('slug name description photo location')
+    .limit(10);
   res.json(stores);
 };
 
@@ -240,10 +243,6 @@ exports.heartStore = async (req, res) => {
   const hearts = req.user.hearts.map(obj => obj.toString());
   // if a user hasn't hearted the store, add it. otherwise, UN-heart it!
   const operator = hearts.includes(req.params.id) ? '$pull' : '$addToSet';
-  const user = await User.findByIdAndUpdate(
-    req.user._id,
-    { [operator]: { hearts: req.params.id } },
-    { new: true }
-  );
+  const user = await User.findByIdAndUpdate(req.user._id, { [operator]: { hearts: req.params.id } }, { new: true });
   res.json(user);
 };

@@ -9,7 +9,7 @@ exports.login = passport.authenticate('local', {
   failureRedirect: '/login',
   failureFlash: 'Login failed!',
   successRedirect: '/',
-  successFlash: 'Successfully logged in'
+  successFlash: 'Successfully logged in',
 });
 
 exports.logout = (req, res) => {
@@ -46,7 +46,7 @@ exports.forgot = async (req, res) => {
     user,
     resetURL,
     filename: 'password-reset', // for the email pug template
-    subject: 'Your password reset link'
+    subject: 'Your password reset link',
   });
   req.flash('success', 'You have been emailed a password reset link.');
   // 4. Redirect to the login page
@@ -56,7 +56,7 @@ exports.forgot = async (req, res) => {
 exports.reset = async (req, res) => {
   const user = await User.findOne({
     resetPasswordToken: req.params.token,
-    resetPasswordExpiry: { $gt: Date.now() }
+    resetPasswordExpiry: { $gt: Date.now() },
   });
   if (!user) {
     req.flash('error', 'Password reset token is invalid or has expired.');
@@ -64,7 +64,7 @@ exports.reset = async (req, res) => {
   }
   // If there is a user, show the reset pasword form
   res.render('reset', {
-    title: 'Reset Your Password'
+    title: 'Reset Your Password',
   });
 };
 
@@ -80,7 +80,7 @@ exports.confirmedPasswords = (req, res, next) => {
 exports.update = async (req, res) => {
   const user = await User.findOne({
     resetPasswordToken: req.params.token,
-    resetPasswordExpiry: { $gt: Date.now() }
+    resetPasswordExpiry: { $gt: Date.now() },
   });
   if (!user) {
     req.flash('error', 'Password reset token is invalid or has expired.');

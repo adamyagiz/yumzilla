@@ -12,25 +12,23 @@ const userSchema = new Schema({
     unique: true,
     lowercase: true,
     trim: true,
-    validate: [
-      validator.isEmail,
-      'Invalid Email Address'
-    ],
-    required: 'Please enter an email address.'
+    validate: [validator.isEmail, 'Invalid Email Address'],
+    required: 'Please enter an email address.',
   },
   name: {
     type: String,
     required: 'Please enter a name',
-    trim: true
+    trim: true,
   },
   resetPasswordToken: String,
   resetPasswordExpiry: Date,
-  hearts: [ // hearts will be an array of store IDs
+  hearts: [
+    // hearts will be an array of store IDs
     {
       type: mongoose.Schema.ObjectId, // id of the hearted store
-      ref: 'Store' // ref the Store schema
-    }
-  ]
+      ref: 'Store', // ref the Store schema
+    },
+  ],
 });
 
 userSchema.virtual('gravatar').get(function() {

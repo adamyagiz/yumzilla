@@ -4,13 +4,13 @@ const promisify = require('es6-promisify');
 
 exports.loginForm = (req, res) => {
   res.render('login', {
-    title: 'Login'
+    title: 'Login',
   });
 };
 
 exports.registerForm = (req, res) => {
   res.render('register', {
-    title: 'Register'
+    title: 'Register',
   });
 };
 
@@ -23,7 +23,7 @@ exports.validateRegister = (req, res, next) => {
   req.sanitizeBody('email').normalizeEmail({
     remove_dots: false,
     remove_extension: false,
-    gmail_remove_subaddress: false
+    gmail_remove_subaddress: false,
   });
   req.checkBody('password', 'Password cannot be blank').notEmpty();
   req.checkBody('password-confirm', 'Confirm Password cannot be blank').notEmpty();
@@ -35,7 +35,7 @@ exports.validateRegister = (req, res, next) => {
     res.render('register', {
       title: 'Register',
       body: req.body,
-      flashes: req.flash()
+      flashes: req.flash(),
     });
     return; // stop from running if we have errors
   }
@@ -45,7 +45,7 @@ exports.validateRegister = (req, res, next) => {
 exports.register = async (req, res, next) => {
   const user = new User({
     name: req.body.name,
-    email: req.body.email
+    email: req.body.email,
   });
   const registerWithPromise = promisify(User.register, User);
   await registerWithPromise(user, req.body.password);
@@ -54,14 +54,14 @@ exports.register = async (req, res, next) => {
 
 exports.account = (req, res) => {
   res.render('account', {
-    title: 'Account'
+    title: 'Account',
   });
 };
 
-exports.updateAccount = async (req, res, next) => {
+exports.updateAccount = async (req, res) => {
   const updates = {
     name: req.body.name,
-    email: req.body.email
+    email: req.body.email,
   };
 
   const user = await User.findOneAndUpdate(

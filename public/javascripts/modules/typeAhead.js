@@ -2,7 +2,8 @@ import axios from 'axios';
 import dompurify from 'dompurify';
 
 function searchResultsHTML(stores) {
-  return stores.map(store => `<a href="/store/${store.slug}" class="search__result"><store>${store.name}</store></a>`)
+  return stores
+    .map(store => `<a href="/store/${store.slug}" class="search__result"><store>${store.name}</store></a>`)
     .join('');
 }
 
@@ -25,18 +26,20 @@ function typeAhead(search) {
 
     axios
       .get(`/api/v1/search/${this.value}`)
-      .then((res) => {
+      .then(res => {
         if (res.data.length) {
           searchResults.innerHTML = dompurify.sanitize(searchResultsHTML(res.data));
         } else {
           // tell them nothing came back
-          searchResults.innerHTML = dompurify.sanitize(`<div class="search__result">No results for <strong>${this.value}</strong> found.</div>`);
+          searchResults.innerHTML = dompurify.sanitize(
+            `<div class="search__result">No results for <strong>${this.value}</strong> found.</div>`
+          );
         }
       })
       .catch(err => console.error(err));
   });
 
-  searchInput.on('keyup', (e) => {
+  searchInput.on('keyup', e => {
     // if the key press is not up, down, or enter, ignore it!
     // 40 = down
     // 38 = up
