@@ -1,3 +1,4 @@
+// interface with mongodb
 const mongoose = require('mongoose');
 
 // import environmental variables from our variables.env file

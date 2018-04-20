@@ -56,4 +56,13 @@ router.get('/api/v1/stores', catchErrors(storeController.json));
 router.get('/api/v1/stores/near/:lat/:lng', catchErrors(storeController.mapStores));
 router.post('/api/v1/stores/:id/heart', catchErrors(storeController.heartStore));
 
+/**
+ * Just for fun 🎊
+ */
+router.get('/reverse/:name', (req, res, next) => {
+  const reverse = [...req.params.name].reverse().join('');
+  res.send(reverse);
+});
+
+
 module.exports = router;

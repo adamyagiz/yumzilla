@@ -17,7 +17,7 @@ exports.registerForm = (req, res) => {
 // validation middleware
 exports.validateRegister = (req, res, next) => {
   // sanitize name
-  req.sanitizeBody('name'); // from expressValidator inport in app.js
+  req.sanitizeBody('name'); // from expressValidator import in app.js
   req.checkBody('name', 'Please enter a name!').notEmpty();
   req.checkBody('email', 'Please enter a valid email!').isEmail();
   req.sanitizeBody('email').normalizeEmail({

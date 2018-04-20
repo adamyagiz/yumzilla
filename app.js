@@ -1,8 +1,8 @@
-const express = require('express');
-const session = require('express-session');
-const mongoose = require('mongoose');
+const express = require('express'); // web framework
+const session = require('express-session'); // use this to manage user sessions
+const mongoose = require('mongoose'); // interface for working with our mongodb database
 const MongoStore = require('connect-mongo')(session);
-const path = require('path');
+const path = require('path'); // utility for working with file and directory paths
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passport = require('passport');
@@ -24,7 +24,7 @@ app.set('view engine', 'pug'); // we use the engine pug, mustache or EJS work gr
 // serves up static files from the public folder. Anything in public/ will just be served up as the file it is
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Takes the raw requests and turns them into usable properties on req.body
+// Takes the raw requests (GET, POST, etc.) and turns them into usable properties on req.body
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -43,7 +43,6 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: new MongoStore({ mongooseConnection: mongoose.connection }),
-    // cookie: { maxAge: 2592000 }
   })
 );
 
