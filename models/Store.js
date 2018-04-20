@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const slug = require('slugs');
+const slug = require('slugs'); // make URL-friendly names for our slugs
 
 mongoose.Promise = global.Promise; // use the built-in native ES6 Promises
 
-const storeSchema = new Schema({
+const storeSchema = new mongoose.Schema({
   name: {
     type: String, // define the type of data we expect for the name
     trim: true, // trim any leading/trailing whitespace
@@ -15,7 +14,7 @@ const storeSchema = new Schema({
     type: String,
     trim: true,
   },
-  tags: [String],
+  tags: [String], // array of strings
   created: {
     type: Date,
     default: Date.now,
@@ -55,7 +54,8 @@ storeSchema.index({
   location: '2dsphere',
 });
 
-// whenever a new store is saved, we auto-generate a slug before the data goes to mongodb
+// set up a pre-save. whenever a new store is saved, we auto-generate a slug
+// BEFORE the data goes to mongodb. only save to mongodb after this pre-save is done.
 storeSchema.pre('save', async function(next) {
   if (!this.isModified('name')) {
     next(); // skip this step
@@ -69,7 +69,6 @@ storeSchema.pre('save', async function(next) {
     this.slug = `${this.slug}-${storesWithSlug.length + 1}`;
   }
   next();
-  // TODO: make more resilient so slugs are unique
 });
 
 // add a method to our store schema

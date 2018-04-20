@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
 mongoose.Promise = global.Promise; // use the built-in native ES6 Promises
 
-const reviewSchema = new Schema({
+const reviewSchema = new mongoose.Schema({
   created: {
     type: Date,
     default: Date.now,
