@@ -59,10 +59,9 @@ router.post('/api/v1/stores/:id/heart', catchErrors(storeController.heartStore))
 /**
  * Just for fun 🎊
  */
-router.get('/reverse/:name', (req, res, next) => {
+router.get('/reverse/:name', (req, res) => {
   const reverse = [...req.params.name].reverse().join('');
   res.send(reverse);
 });
-
 
 module.exports = router;
