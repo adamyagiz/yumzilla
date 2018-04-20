@@ -6,6 +6,8 @@
 
 .store {
   background:white;
+  display: flex;
+  flex-direction: column;
   margin: 1.25em 0 0 1.25em;
   width: calc(33.3333% - 1.25em);
   box-shadow: $shad;
@@ -18,6 +20,9 @@
       line-height: 1.2;
       margin-bottom: 0;
     }
+  }
+  &__map {
+    margin-top: auto;
   }
   @media all and (max-width: 850px) {
     width: calc(50% - 1.25em);
