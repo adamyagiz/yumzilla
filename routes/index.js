@@ -33,16 +33,16 @@ router.post('/account', catchErrors(userController.updateAccount));
 router.post('/account/forgot', catchErrors(authController.forgot));
 router.post('/account/reset/:token', authController.confirmedPasswords, catchErrors(authController.update));
 router.post(
-  '/add',
-  storeController.upload,
-  catchErrors(storeController.resize),
-  catchErrors(storeController.createStore)
+    '/add',
+    storeController.upload,
+    catchErrors(storeController.resize),
+    catchErrors(storeController.createStore)
 );
 router.post(
-  '/add/:id',
-  storeController.upload,
-  catchErrors(storeController.resize),
-  catchErrors(storeController.updateStore)
+    '/add/:id',
+    storeController.upload,
+    catchErrors(storeController.resize),
+    catchErrors(storeController.updateStore)
 );
 router.post('/login', authController.login);
 router.post('/register', userController.validateRegister, userController.register, authController.login);
@@ -60,10 +60,10 @@ router.post('/api/v1/stores/:id/heart', catchErrors(storeController.heartStore))
  * Just for fun 🎊
  */
 router.get('/reverse/:name', (req, res) => {
-  console.log('reversing string...');
-  const reverse = [...req.params.name].reverse().join('');
-  console.log('sending string to browser...');
-  res.send(reverse);
+    console.log('reversing string...');
+    const reverse = [...req.params.name].reverse().join('');
+    console.log('sending string to browser...');
+    res.send(reverse);
 });
 
 module.exports = router;
